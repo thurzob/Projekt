@@ -16,9 +16,29 @@ public partial class WebshopContext : DbContext
     {
     }
 
+    public virtual DbSet<Aspnetrole> Aspnetroles { get; set; }
+
+    public virtual DbSet<Aspnetroleclaim> Aspnetroleclaims { get; set; }
+
+    public virtual DbSet<Aspnetuser> Aspnetusers { get; set; }
+
+    public virtual DbSet<Aspnetuserclaim> Aspnetuserclaims { get; set; }
+
+    public virtual DbSet<Aspnetuserlogin> Aspnetuserlogins { get; set; }
+
+    public virtual DbSet<Aspnetusertoken> Aspnetusertokens { get; set; }
+
+    public virtual DbSet<Efmigrationshistory> Efmigrationshistories { get; set; }
+
     public virtual DbSet<Merchant> Merchants { get; set; }
 
-    public virtual DbSet<Quantity> Quantities { get; set; }
+    public virtual DbSet<Passwordresetrequest> Passwordresetrequests { get; set; }
+
+    public virtual DbSet<Product> Products { get; set; }
+
+    public virtual DbSet<Purchase> Purchases { get; set; }
+
+    public virtual DbSet<Storage> Storages { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -32,34 +52,210 @@ public partial class WebshopContext : DbContext
             .UseCollation("utf8mb4_general_ci")
             .HasCharSet("utf8mb4");
 
+        modelBuilder.Entity<Aspnetrole>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("aspnetroles");
+
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex").IsUnique();
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Aspnetroleclaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("aspnetroleclaims");
+
+            entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Aspnetroleclaims)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_AspNetRoleClaims_AspNetRoles_RoleId");
+        });
+
+        modelBuilder.Entity<Aspnetuser>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("aspnetusers");
+
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex").IsUnique();
+
+            entity.Property(e => e.AccessFailedCount).HasColumnType("int(11)");
+            entity.Property(e => e.Age).HasColumnType("int(11)");
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.LockoutEnd).HasMaxLength(6);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.OrderStatus).HasMaxLength(255);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "Aspnetuserrole",
+                    r => r.HasOne<Aspnetrole>().WithMany()
+                        .HasForeignKey("RoleId")
+                        .HasConstraintName("FK_AspNetUserRoles_AspNetRoles_RoleId"),
+                    l => l.HasOne<Aspnetuser>().WithMany()
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_AspNetUserRoles_AspNetUsers_UserId"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId")
+                            .HasName("PRIMARY")
+                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+                        j.ToTable("aspnetuserroles");
+                        j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+                    });
+        });
+
+        modelBuilder.Entity<Aspnetuserclaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("aspnetuserclaims");
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Aspnetuserclaims)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_AspNetUserClaims_AspNetUsers_UserId");
+        });
+
+        modelBuilder.Entity<Aspnetuserlogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey })
+                .HasName("PRIMARY")
+                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+
+            entity.ToTable("aspnetuserlogins");
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Aspnetuserlogins)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_AspNetUserLogins_AspNetUsers_UserId");
+        });
+
+        modelBuilder.Entity<Aspnetusertoken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name })
+                .HasName("PRIMARY")
+                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0, 0 });
+
+            entity.ToTable("aspnetusertokens");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Aspnetusertokens)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_AspNetUserTokens_AspNetUsers_UserId");
+        });
+
+        modelBuilder.Entity<Efmigrationshistory>(entity =>
+        {
+            entity.HasKey(e => e.MigrationId).HasName("PRIMARY");
+
+            entity.ToTable("__efmigrationshistory");
+
+            entity.Property(e => e.MigrationId).HasMaxLength(150);
+            entity.Property(e => e.ProductVersion).HasMaxLength(32);
+        });
+
         modelBuilder.Entity<Merchant>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("merchant");
 
-            entity.HasIndex(e => e.QuantityId, "QuantityId");
+            entity.HasIndex(e => e.UserId, "UserId");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
-            entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Price).HasColumnType("int(50)");
-            entity.Property(e => e.QuantityId).HasColumnType("int(100)");
+            entity.Property(e => e.ProductId).HasColumnType("int(11)");
+            entity.Property(e => e.Quantity).HasColumnType("int(110)");
+            entity.Property(e => e.SerialName).HasMaxLength(200);
+            entity.Property(e => e.Type).HasMaxLength(200);
 
-            entity.HasOne(d => d.Quantity).WithMany(p => p.Merchants)
-                .HasForeignKey(d => d.QuantityId)
-                .HasConstraintName("merchant_ibfk_2");
+            entity.HasOne(d => d.User).WithMany(p => p.Merchants)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("merchant_ibfk_1");
         });
 
-        modelBuilder.Entity<Quantity>(entity =>
+        modelBuilder.Entity<Passwordresetrequest>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("passwordresetrequest");
+
+            entity.Property(e => e.Email).HasMaxLength(255);
+            entity.Property(e => e.UpdatesPassword).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("quantity");
+            entity.ToTable("product");
 
-            entity.Property(e => e.Id).HasColumnType("int(100)");
-            entity.Property(e => e.Extant).HasColumnType("int(100)");
-            entity.Property(e => e.Revenue).HasColumnType("int(255)");
-            entity.Property(e => e.Sold).HasColumnType("int(100)");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Price).HasColumnType("int(100)");
+            entity.Property(e => e.SerialName).HasMaxLength(200);
+            entity.Property(e => e.Type).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("purchase");
+
+            entity.HasIndex(e => e.Tidid, "TIDID");
+
+            entity.HasIndex(e => e.UserId, "UserId");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.BillingAddress).HasMaxLength(255);
+            entity.Property(e => e.BillingName).HasMaxLength(255);
+            entity.Property(e => e.BillingPostalCode).HasMaxLength(255);
+            entity.Property(e => e.Date)
+                .HasDefaultValueSql("current_timestamp()")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DeliveryAddress).HasMaxLength(255);
+            entity.Property(e => e.Email).HasMaxLength(255);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(255);
+            entity.Property(e => e.PostalCode).HasMaxLength(255);
+            entity.Property(e => e.Tidid)
+                .HasColumnType("int(11)")
+                .HasColumnName("TIDID");
+
+            entity.HasOne(d => d.Tid).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.Tidid)
+                .HasConstraintName("purchase_ibfk_1");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("purchase_ibfk_2");
+        });
+
+        modelBuilder.Entity<Storage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("storage");
+
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Existing).HasColumnType("int(20)");
+            entity.Property(e => e.Sold).HasColumnType("int(20)");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -68,17 +264,11 @@ public partial class WebshopContext : DbContext
 
             entity.ToTable("user");
 
-            entity.HasIndex(e => e.MerchantId, "MerchantsId");
-
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Email).HasMaxLength(200);
-            entity.Property(e => e.MerchantId).HasColumnType("int(11)");
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Password).HasMaxLength(200);
-
-            entity.HasOne(d => d.Merchant).WithMany(p => p.User)
-                .HasForeignKey(d => d.MerchantId)
-                .HasConstraintName("user_ibfk_1");
+            entity.Property(e => e.PhoneNumber).HasColumnType("int(20)");
         });
 
         OnModelCreatingPartial(modelBuilder);

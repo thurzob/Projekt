@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\thurz\\source\\repos\\Webshop\\Bakcend\\Bakcend.csproj": {}
+    "C:\\Users\\thurz\\Desktop\\Projekt\\Webshop\\Bakcend\\Bakcend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\thurz\\source\\repos\\Webshop\\Bakcend\\Bakcend.csproj": {
+    "C:\\Users\\thurz\\Desktop\\Projekt\\Webshop\\Bakcend\\Bakcend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\thurz\\source\\repos\\Webshop\\Bakcend\\Bakcend.csproj",
+        "projectUniqueName": "C:\\Users\\thurz\\Desktop\\Projekt\\Webshop\\Bakcend\\Bakcend.csproj",
         "projectName": "Bakcend",
-        "projectPath": "C:\\Users\\thurz\\source\\repos\\Webshop\\Bakcend\\Bakcend.csproj",
+        "projectPath": "C:\\Users\\thurz\\Desktop\\Projekt\\Webshop\\Bakcend\\Bakcend.csproj",
         "packagesPath": "C:\\Users\\thurz\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\thurz\\source\\repos\\Webshop\\Bakcend\\obj\\",
+        "outputPath": "C:\\Users\\thurz\\Desktop\\Projekt\\Webshop\\Bakcend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -38,36 +38,55 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.Cookies": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.AspNetCore.Cors": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[8.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[8.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[8.0.2, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
               "version": "[8.0.0-beta.2, )"
+            },
+            "SendGrid": {
+              "target": "Package",
+              "version": "[9.29.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

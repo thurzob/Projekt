@@ -13,7 +13,7 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
-    public int MerchantId { get; set; }
+    public int PhoneNumber { get; set; }
 
-    public virtual Merchant Merchant { get; set; } = null!;
+    public DateOnly? Date { get; set; }
 }

@@ -7,13 +7,19 @@ public partial class Merchant
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string SerialName { get; set; } = null!;
+
+    public string Type { get; set; } = null!;
 
     public int Price { get; set; }
 
-    public int QuantityId { get; set; }
+    public int ProductId { get; set; }
 
-    public virtual Quantity Quantity { get; set; } = null!;
+    public int Quantity { get; set; }
 
-    public virtual ICollection<User> User { get; set; } = new List<User>();
+    public string? UserId { get; set; }
+
+    public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+
+    public virtual Aspnetuser? User { get; set; }
 }
